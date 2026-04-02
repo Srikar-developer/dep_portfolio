@@ -1345,7 +1345,7 @@ body {
 .form-message.success {
   background: #d1fae5;
   color: #065f46;
-  border: 2px solid var(--secondary-color);
+  border: 2px solid #10b981;
   display: flex;
 }
 
@@ -1779,16 +1779,7 @@ body {
   opacity: 0.9;
 }
 
-.footer i {
-  color: #ef4444;
-  animation: heartBeat 1.5s infinite;
-}
 
-@keyframes heartBeat {
-  0%, 100% { transform: scale(1); }
-  10%, 30% { transform: scale(1.1); }
-  20%, 40% { transform: scale(0.9); }
-}
 
 #back-to-top {
   position: fixed;

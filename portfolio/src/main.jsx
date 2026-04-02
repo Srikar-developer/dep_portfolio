@@ -1,10 +1,3 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+// This file is intentionally minimal.
+// The portfolio uses vanilla JS loaded directly via index.html → /src/App.jsx
+// main.jsx is not used as the entry point for this project.

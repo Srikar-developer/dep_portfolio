@@ -49,11 +49,11 @@ const htmlElement = document.documentElement;
 
 function setTheme(theme) {
   htmlElement.setAttribute('data-theme', theme);
-  const icon = themeToggle.querySelector('i');
-  if (theme === 'dark') {
-    icon.className = 'fas fa-sun';
-  } else {
-    icon.className = 'fas fa-moon';
+  if (themeToggle) {
+    const icon = themeToggle.querySelector('i');
+    if (icon) {
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
   }
   localStorage.setItem('theme', theme);
 }
@@ -105,7 +105,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     if (target) {
       const headerOffset = 80;
       const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
       window.scrollTo({
         top: offsetPosition,
@@ -120,13 +120,13 @@ const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-link');
 
 function updateActiveNav() {
-  const scrollY = window.pageYOffset;
+  const scrollY = window.scrollY;
 
   sections.forEach(section => {
     const sectionHeight = section.offsetHeight;
     const sectionTop = section.offsetTop - 100;
     const sectionId = section.getAttribute('id');
-    
+
     if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
       navLinks.forEach(link => {
         link.classList.remove('active');
@@ -235,7 +235,7 @@ function addMessage(text, isUser = false, showSuggestions = null) {
   
   messageDiv.appendChild(avatar);
   messageDiv.appendChild(content);
-  chatbotMessages.appendChild(messageDiv);
+  if (chatbotMessages) chatbotMessages.appendChild(messageDiv);
   
   // Add suggestions if provided
   if (showSuggestions && showSuggestions.length > 0) {
@@ -253,21 +253,21 @@ function addMessage(text, isUser = false, showSuggestions = null) {
       suggestionsDiv.appendChild(btn);
     });
     
-    chatbotMessages.appendChild(suggestionsDiv);
+    if (chatbotMessages) chatbotMessages.appendChild(suggestionsDiv);
   }
-  
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+  if (chatbotMessages) chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 }
 
 // Show typing indicator
 function showTyping() {
-  chatbotTyping.classList.add('active');
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  if (chatbotTyping) chatbotTyping.classList.add('active');
+  if (chatbotMessages) chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 }
 
 // Hide typing indicator
 function hideTyping() {
-  chatbotTyping.classList.remove('active');
+  if (chatbotTyping) chatbotTyping.classList.remove('active');
 }
 
 // Get bot response based on user message
@@ -478,7 +478,7 @@ if (contactForm) {
     try {
       // Using FormSubmit.co for zero-config email delivery
       const EMAIL_DESTINATION = 'srikarpuyal.me@gmail.com';
-      
+
       const response = await fetch(`https://formsubmit.co/ajax/${EMAIL_DESTINATION}`, {
         method: 'POST',
         headers: {
@@ -492,43 +492,51 @@ if (contactForm) {
           message: formData.message,
           _subject: `Portfolio Contact: ${formData.subject}`,
           _replyto: formData.email,
-          _template: 'box' // Beautiful email template
+          _template: 'box',
+          _captcha: 'false',           // Disable captcha redirect
+          _honey: '',                   // Honeypot spam protection
+          _autoresponse: `Hi ${formData.name}, thanks for reaching out! I received your message and will get back to you within 24-48 hours. — Srikar`
         })
       });
 
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
       const result = await response.json();
 
-      if (result.success) {
+      // FormSubmit returns success as the string "true", not a boolean
+      if (result.success === 'true' || result.success === true) {
         formMessage.className = 'form-message success';
-        formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Thank you! Your message has been sent successfully. I will get back to you soon.';
-        
+        formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you within 24-48 hours.';
+
         contactForm.reset();
         if (charCount) charCount.textContent = '0';
-        
+
         formInputs.forEach(input => {
           input.parentElement.classList.remove('error');
         });
-        
+
         setTimeout(() => {
           formMessage.style.display = 'none';
         }, 8000);
       } else {
-        throw new Error(result.message || 'Failed to send message');
+        throw new Error(result.message || 'Email service returned an error. Please try again.');
       }
-      
+
     } catch (error) {
-      console.error('Error sending message:', error);
-      
-      // Fallback: Open email client
+      console.error('Contact form error:', error);
+
+      // Fallback: open the user's email client with prefilled fields
       const mailtoLink = `mailto:srikarpuyal.me@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
       window.location.href = mailtoLink;
-      
+
       formMessage.className = 'form-message error';
       formMessage.innerHTML = `
-        <div>
-          <i class="fas fa-envelope"></i> 
-          <span>Opening your email client as backup... Or contact me directly at 
-          <a href="mailto:srikarpuyal.me@gmail.com" style="color: inherit; text-decoration: underline; font-weight: 600;">srikarpuyal.me@gmail.com</a></span>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <i class="fas fa-envelope" style="margin-top:2px;"></i>
+          <span>Your email client is opening with the message pre-filled. Alternatively, email me directly at
+          <a href="mailto:srikarpuyal.me@gmail.com" style="color:inherit;text-decoration:underline;font-weight:700;">srikarpuyal.me@gmail.com</a>.</span>
         </div>
       `;
     } finally {
@@ -543,11 +551,7 @@ const backToTopButton = document.getElementById('back-to-top');
 
 if (backToTopButton) {
   window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 300) {
-      backToTopButton.style.display = 'flex';
-    } else {
-      backToTopButton.style.display = 'none';
-    }
+    backToTopButton.style.display = window.scrollY > 300 ? 'flex' : 'none';
   });
 
   backToTopButton.addEventListener('click', () => {
@@ -562,18 +566,16 @@ if (backToTopButton) {
 const header = document.getElementById('header');
 if (header) {
   window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 10) {
-      header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-      header.style.boxShadow = '0 1px 2px 0 rgb(0 0 0 / 0.05)';
-    }
+    header.style.boxShadow = window.scrollY > 10
+      ? '0 4px 20px rgba(0, 0, 0, 0.1)'
+      : '0 1px 2px 0 rgb(0 0 0 / 0.05)';
   });
 }
 
 // ==================== KEYBOARD NAVIGATION ====================
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (navMenu && navMenu.classList.contains('active')) {
+    if (hamburger && navMenu && navMenu.classList.contains('active')) {
       hamburger.classList.remove('active');
       navMenu.classList.remove('active');
     }
@@ -596,9 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update active navigation on load
   updateActiveNav();
   
-  // Log successful page load
-  console.log('🚀 Portfolio loaded successfully!');
-  console.log('✨ Features: Dark Mode, Typing Animation, Enhanced Chatbot, Scroll Animations');
+  // Portfolio loaded
 });
 
 // ==================== HANDLE EXTERNAL LINKS ====================
