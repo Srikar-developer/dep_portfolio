@@ -46,36 +46,50 @@
   <!-- Hero Section -->
   <section id="home" class="hero">
     <div class="hero-bg-effect"></div>
-    <div class="container">
+    <div class="hero-bg-effect-2"></div>
+    <div class="container hero-container">
       <div class="hero-content">
-        <p class="hero-subtitle"> Welcome! I'm</p>
-        <h1 class="hero-title">Srikar</h1>
+        <p class="hero-subtitle">Welcome! I'm</p>
+        <h1 class="hero-title">Srikar<span class="title-glow">.</span></h1>
         <div class="hero-roles">
           <span class="typing-text" id="typing-text"></span>
         </div>
         <p class="hero-description">
-          MERN Stack Developer | Salesforce Certified | HackIndia Top 10 Finalist | CGPA: 7.39
+          Passionate <strong>MERN Stack Developer</strong>, <strong>Salesforce Certified Professional</strong>, and HackIndia Top 10 Finalist. Discovering innovative solutions through code.
         </p>
         <div class="hero-buttons">
-          <a href="#contact" class="btn btn-primary">
-            <i class="fas fa-paper-plane"></i> Get In Touch
-          </a>
-          <a href="#projects" class="btn btn-secondary">
+          <a href="#projects" class="btn btn-primary btn-glow">
             <i class="fas fa-rocket"></i> View Projects
           </a>
+          <a href="#contact" class="btn btn-secondary btn-outline">
+            <i class="fas fa-paper-plane"></i> Let's Connect
+          </a>
         </div>
-        <div class="hero-stats">
-          <div class="stat-item">
-            <h3>10+</h3>
-            <p>Projects</p>
+      </div>
+      
+      <div class="hero-visual">
+        <div class="visual-wrapper">
+          <img src="/vite.svg" alt="3D Tech Element" class="floating-graphic" />
+          <div class="floating-card card-1">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <div class="card-text">
+              <h4>10+</h4>
+              <p>Projects</p>
+            </div>
           </div>
-          <div class="stat-item">
-            <h3>Top 10</h3>
-            <p>HackIndia Rank</p>
+          <div class="floating-card card-2">
+            <div class="card-icon"><i class="fas fa-trophy"></i></div>
+            <div class="card-text">
+              <h4>Top 10</h4>
+              <p>HackIndia</p>
+            </div>
           </div>
-          <div class="stat-item">
-            <h3>3+</h3>
-            <p>Certifications</p>
+          <div class="floating-card card-3">
+            <div class="card-icon"><i class="fas fa-certificate"></i></div>
+            <div class="card-text">
+              <h4>Certified</h4>
+              <p>Salesforce</p>
+            </div>
           </div>
         </div>
       </div>
@@ -282,7 +296,7 @@
         <div class="project-card featured">
           <div class="project-badge">🏆 Top 10</div>
           <div class="project-image">
-            <img src="smart pg.png" alt="Smart Presentation Generator" onerror="this.src='https://via.placeholder.com/400x300/34a853/ffffff?text=Smart+PG'"/>
+            <img src="https://via.placeholder.com/900x540/34a853/ffffff?text=Smart+Presentation+Generator" alt="Smart Presentation Generator"/>
             <div class="project-overlay">
               <div class="project-links">
                 <a href="#" class="project-link" aria-label="View Demo"><i class="fas fa-eye"></i></a>
@@ -415,7 +429,7 @@
         <div class="cert-card">
           <div class="cert-header">
             <div class="cert-logo servicenow">
-              <img src="mody1.png" alt="ServiceNow" class="cert-logo-img" onerror="this.parentElement.innerHTML='<i class=\'fas fa-cloud\'></i>'"/>
+              <img src="https://via.placeholder.com/400x400/8b5cf6/ffffff?text=ServiceNow" alt="ServiceNow" class="cert-logo-img" onerror="this.parentElement.innerHTML='<i class=\'fas fa-cloud\'></i>'"/>
             </div>
             <div class="cert-title">
               <h3>Virtual Internship Program</h3>
@@ -466,7 +480,7 @@
         <div class="cert-card">
           <div class="cert-header">
             <div class="cert-logo achievement">
-              <img src="hackindia img.jpeg" alt="HackIndia" class="cert-logo-img" onerror="this.parentElement.innerHTML='<i class=\'fas fa-trophy\'></i>'"/>
+              <img src="https://via.placeholder.com/400x400/f59e0b/ffffff?text=HackIndia" alt="HackIndia" class="cert-logo-img" onerror="this.parentElement.innerHTML='<i class=\'fas fa-trophy\'></i>'"/>
             </div>
             <div class="cert-title">
               <h3>HackIndia 2025</h3>
@@ -554,8 +568,8 @@
             </div>
           </div>
 
-          <a href="Srikar_CV_2.pdf" download="Srikar_Puyal_Resume.pdf" class="btn btn-primary btn-download">
-            <i class="fas fa-download"></i> Download Resume
+          <a href="mailto:srikarpuyal.me@gmail.com?subject=Resume%20Request&body=Hi%20Srikar%2C%20please%20share%20your%20latest%20resume.%0A%0AThanks%2C" class="btn btn-primary btn-download">
+            <i class="fas fa-envelope"></i> Request Resume
           </a>
         </div>
 
@@ -604,66 +618,7 @@
     <i class="fas fa-arrow-up"></i>
   </button>
 
-  <!-- Chatbot Widget -->
-  <div class="chatbot-widget">
-    <button class="chatbot-button" id="chatbot-btn" aria-label="Open chat">
-      <i class="fas fa-comments"></i>
-      <span class="chatbot-pulse"></span>
-    </button>
-    <div class="chatbot-window" id="chatbot-window">
-      <div class="chatbot-header">
-        <div class="chatbot-header-content">
-          <div class="chatbot-avatar">
-            <i class="fas fa-robot"></i>
-          </div>
-          <div>
-            <h3>Srikar's Assistant</h3>
-            <span class="chatbot-status">Online</span>
-          </div>
-        </div>
-        <button class="chatbot-close" id="chatbot-close" aria-label="Close chat">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="chatbot-messages" id="chatbot-messages">
-        <div class="chat-message bot">
-          <div class="message-avatar">
-            <i class="fas fa-robot"></i>
-          </div>
-          <div class="message-content">
-            <p>Hi there! 👋 I'm Srikar's virtual assistant. How can I help you today?</p>
-          </div>
-        </div>
-        <div class="chat-quick-replies">
-          <button class="quick-reply-btn" data-reply="Tell me about your experience">
-            <i class="fas fa-briefcase"></i> Experience
-          </button>
-          <button class="quick-reply-btn" data-reply="What are your skills?">
-            <i class="fas fa-code"></i> Skills
-          </button>
-          <button class="quick-reply-btn" data-reply="Show me your projects">
-            <i class="fas fa-rocket"></i> Projects
-          </button>
-          <button class="quick-reply-btn" data-reply="How can I contact you?">
-            <i class="fas fa-envelope"></i> Contact
-          </button>
-        </div>
-      </div>
-      <div class="chatbot-typing" id="chatbot-typing">
-        <div class="typing-indicator">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div class="chatbot-input">
-        <input type="text" id="chatbot-input" placeholder="Type your message..." />
-        <button id="chatbot-send" aria-label="Send message">
-          <i class="fas fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-  </div>
+
   <script type="module" src="/src/App.jsx"></script>
 </body>
 </html>
