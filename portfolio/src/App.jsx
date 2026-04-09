@@ -44,11 +44,11 @@ function typeRole() {
 }
 
 // ==================== THEME TOGGLE ====================
-const themeToggle = document.getElementById('theme-toggle');
 const htmlElement = document.documentElement;
 
 function setTheme(theme) {
   htmlElement.setAttribute('data-theme', theme);
+  const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {
     const icon = themeToggle.querySelector('i');
     if (icon) {
@@ -58,43 +58,9 @@ function setTheme(theme) {
   localStorage.setItem('theme', theme);
 }
 
-if (themeToggle) {
-  themeToggle.addEventListener('click', () => {
-    const currentTheme = htmlElement.getAttribute('data-theme');
-    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-  });
-}
-
-// Load saved theme
+// Load saved theme immediately (before DOMContentLoaded so there's no flash)
 const savedTheme = localStorage.getItem('theme') || 'light';
 setTheme(savedTheme);
-
-// ==================== MOBILE NAVIGATION ====================
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('nav-menu');
-
-if (hamburger && navMenu) {
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
-
-  // Close menu when clicking on a link
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('active');
-      navMenu.classList.remove('active');
-    });
-  });
-
-  // Close menu when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-      hamburger.classList.remove('active');
-      navMenu.classList.remove('active');
-    }
-  });
-}
 
 // ==================== SMOOTH SCROLLING ====================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -370,15 +336,7 @@ if (header) {
   });
 }
 
-// ==================== KEYBOARD NAVIGATION ====================
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (hamburger && navMenu && navMenu.classList.contains('active')) {
-      hamburger.classList.remove('active');
-      navMenu.classList.remove('active');
-    }
-  }
-});
+// (Keyboard navigation moved inside DOMContentLoaded below)
 
 // ==================== PREVENT FORM RESUBMISSION ====================
 if (window.history.replaceState) {
@@ -389,11 +347,57 @@ if (window.history.replaceState) {
 document.addEventListener('DOMContentLoaded', () => {
   // Start typing animation
   typeRole();
-  
+
   // Update active navigation on load
   updateActiveNav();
-  
-  // Portfolio loaded
+
+  // ==================== THEME TOGGLE (DOM-safe) ====================
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = htmlElement.getAttribute('data-theme');
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // ==================== MOBILE NAVIGATION (DOM-safe) ====================
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('nav-menu');
+
+  if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    // Close menu when clicking on a link
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      }
+    });
+  }
+
+  // ==================== KEYBOARD NAVIGATION (DOM-safe) ====================
+  document.addEventListener('keydown', (e) => {
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    if (e.key === 'Escape') {
+      if (hamburger && navMenu && navMenu.classList.contains('active')) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      }
+    }
+  });
 });
 
 // ==================== HANDLE EXTERNAL LINKS ====================
