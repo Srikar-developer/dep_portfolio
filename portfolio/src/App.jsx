@@ -216,6 +216,7 @@ if (contactForm) {
     });
 
     if (!isValid) {
+      formMessage.style.display = 'flex';
       formMessage.className = 'form-message error';
       formMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all required fields correctly.';
       
@@ -231,6 +232,10 @@ if (contactForm) {
     
     submitButton.innerHTML = '<span class="loading-spinner"></span> Sending...';
     submitButton.disabled = true;
+
+    // Hide any previous message
+    formMessage.style.display = 'none';
+    formMessage.className = 'form-message';
     
     const formData = {
       name: document.getElementById('name').value,
@@ -240,66 +245,39 @@ if (contactForm) {
     };
     
     try {
-      // Using FormSubmit.co for zero-config email delivery
-      const EMAIL_DESTINATION = 'srikarpuyal.me@gmail.com';
-
-      const response = await fetch(`https://formsubmit.co/ajax/${EMAIL_DESTINATION}`, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          _subject: `Portfolio Contact: ${formData.subject}`,
-          _replyto: formData.email,
-          _template: 'box',
-          _captcha: 'false',           // Disable captcha redirect
-          _honey: '',                   // Honeypot spam protection
-          _autoresponse: `Hi ${formData.name}, thanks for reaching out! I received your message and will get back to you within 24-48 hours. — Srikar`
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
 
       const result = await response.json();
 
-      // FormSubmit returns success as the string "true", not a boolean
-      if (result.success === 'true' || result.success === true) {
+      if (response.ok && result.success) {
+        formMessage.style.display = 'flex';
         formMessage.className = 'form-message success';
-        formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you within 24-48 hours.';
+        formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Message sent! I\'ll get back to you within 24–48 hours.';
 
         contactForm.reset();
         if (charCount) charCount.textContent = '0';
-
-        formInputs.forEach(input => {
-          input.parentElement.classList.remove('error');
-        });
+        formInputs.forEach(input => input.parentElement.classList.remove('error'));
 
         setTimeout(() => {
           formMessage.style.display = 'none';
         }, 8000);
       } else {
-        throw new Error(result.message || 'Email service returned an error. Please try again.');
+        throw new Error(result.error || 'Something went wrong. Please try again.');
       }
 
     } catch (error) {
       console.error('Contact form error:', error);
 
-      // Fallback: open the user's email client with prefilled fields
-      const mailtoLink = `mailto:srikarpuyal.me@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
-      window.location.href = mailtoLink;
-
+      formMessage.style.display = 'flex';
       formMessage.className = 'form-message error';
       formMessage.innerHTML = `
         <div style="display:flex;align-items:flex-start;gap:12px;">
-          <i class="fas fa-envelope" style="margin-top:2px;"></i>
-          <span>Your email client is opening with the message pre-filled. Alternatively, email me directly at
+          <i class="fas fa-exclamation-circle" style="margin-top:2px;"></i>
+          <span>${error.message || 'Failed to send message.'} Alternatively, email me directly at
           <a href="mailto:srikarpuyal.me@gmail.com" style="color:inherit;text-decoration:underline;font-weight:700;">srikarpuyal.me@gmail.com</a>.</span>
         </div>
       `;
@@ -309,6 +287,7 @@ if (contactForm) {
     }
   });
 }
+
 
 // ==================== BACK TO TOP ====================
 const backToTopButton = document.getElementById('back-to-top');
