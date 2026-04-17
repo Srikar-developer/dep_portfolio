@@ -1,3 +1,8 @@
+// ==================== CONFIGURATION ====================
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://your-backend-url.com'; // Change this to your production backend URL
+
 // ==================== TYPING ANIMATION DATA ====================
 const roles = [
   "MERN Stack Developer",
@@ -310,13 +315,22 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const response = await fetch('/api/contact', {
+        const apiUrl = `${API_BASE_URL}/api/contact`;
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
 
-        const result = await response.json();
+        // Check if response is valid before parsing JSON
+        let result = {};
+        const contentType = response.headers.get('content-type');
+
+        if (contentType && contentType.includes('application/json')) {
+          result = await response.json();
+        } else if (!response.ok) {
+          throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
 
         if (response.ok && result.success) {
           formMessage.style.display = 'flex';
@@ -332,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formMessage.style.display = 'none';
           }, 8000);
         } else {
-          throw new Error(result.error || 'Something went wrong. Please try again.');
+          throw new Error(result.error || 'Failed to send message. Please try again.');
         }
 
       } catch (error) {
@@ -360,11 +374,18 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           `;
         } else {
-          // Server error: Show generic fallback
+          // Server error: Show detailed fallback
+          let errorMsg = error.message || 'Failed to send message.';
+
+          // Check if it's a backend connection error
+          if (errorMsg.includes('Failed to fetch') || errorMsg.includes('Backend')) {
+            errorMsg = 'Cannot connect to backend server. Please ensure the server is running.';
+          }
+
           formMessage.innerHTML = `
             <div style="display:flex;align-items:flex-start;gap:12px;">
               <i class="fas fa-exclamation-circle" style="margin-top:2px;"></i>
-              <span>${error.message || 'Failed to send message.'} Please try again or email me at
+              <span>${errorMsg} Please try again or email me at
               <a href="mailto:${emailAddress}" style="color:inherit;text-decoration:underline;font-weight:700;">${emailAddress}</a>.</span>
             </div>
           `;
