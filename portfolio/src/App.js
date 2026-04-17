@@ -190,6 +190,47 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageTextarea = document.getElementById('message');
   const charCount = document.getElementById('char-count');
 
+  // ── Auto-save form to localStorage ────────────────────────────────
+  function saveDraft() {
+    const formData = {
+      name: document.getElementById('name')?.value || '',
+      email: document.getElementById('email')?.value || '',
+      subject: document.getElementById('subject')?.value || '',
+      message: document.getElementById('message')?.value || '',
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('portfolioFormDraft', JSON.stringify(formData));
+  }
+
+  function loadDraft() {
+    const draft = localStorage.getItem('portfolioFormDraft');
+    if (draft) {
+      try {
+        const formData = JSON.parse(draft);
+        const nameField = document.getElementById('name');
+        const emailField = document.getElementById('email');
+        const subjectField = document.getElementById('subject');
+        const messageField = document.getElementById('message');
+
+        if (nameField) nameField.value = formData.name;
+        if (emailField) emailField.value = formData.email;
+        if (subjectField) subjectField.value = formData.subject;
+        if (messageField) messageField.value = formData.message;
+
+        if (messageField && charCount) {
+          charCount.textContent = formData.message.length;
+        }
+      } catch (e) {
+        console.log('Could not restore draft');
+      }
+    }
+  }
+
+  // Load draft on page load
+  if (contactForm) {
+    loadDraft();
+  }
+
   // Character counter for message field
   if (messageTextarea && charCount) {
     messageTextarea.addEventListener('input', function () {
@@ -203,6 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         charCount.style.color = 'var(--text-secondary)';
       }
+
+      // Auto-save draft on input
+      saveDraft();
     });
   }
 
@@ -218,6 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (this.parentElement.classList.contains('error')) {
         validateField(this);
       }
+      // Auto-save draft on input
+      saveDraft();
     });
   });
 
@@ -280,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
           contactForm.reset();
           if (charCount) charCount.textContent = '0';
           formInputs.forEach(input => input.parentElement.classList.remove('error'));
+          localStorage.removeItem('portfolioFormDraft');
 
           setTimeout(() => {
             formMessage.style.display = 'none';
@@ -291,15 +338,37 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (error) {
         console.error('Contact form error:', error);
 
+        // Check if it's a network error (offline)
+        const isNetworkError = !navigator.onLine || error.message.includes('Failed to fetch');
+        const emailAddress = 'srikarpuyal.me@gmail.com';
+
         formMessage.style.display = 'flex';
         formMessage.className = 'form-message error';
-        formMessage.innerHTML = `
-          <div style="display:flex;align-items:flex-start;gap:12px;">
-            <i class="fas fa-exclamation-circle" style="margin-top:2px;"></i>
-            <span>${error.message || 'Failed to send message.'} Alternatively, email me directly at
-            <a href="mailto:srikarpuyal.me@gmail.com" style="color:inherit;text-decoration:underline;font-weight:700;">srikarpuyal.me@gmail.com</a>.</span>
-          </div>
-        `;
+
+        if (isNetworkError) {
+          // Offline mode: Show draft saved message and email fallback
+          formMessage.innerHTML = `
+            <div style="display:flex;align-items:flex-start;gap:12px;flex-direction:column;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <i class="fas fa-wifi-slash" style="margin-top:2px;"></i>
+                <span><strong>You're offline.</strong> Your message has been saved. You can:</span>
+              </div>
+              <ol style="margin-left:28px;color:inherit;line-height:1.6;">
+                <li>Come back when online to send it automatically</li>
+                <li>Or email me directly at <a href="mailto:${emailAddress}" style="color:inherit;text-decoration:underline;font-weight:700;">${emailAddress}</a> with your message</li>
+              </ol>
+            </div>
+          `;
+        } else {
+          // Server error: Show generic fallback
+          formMessage.innerHTML = `
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <i class="fas fa-exclamation-circle" style="margin-top:2px;"></i>
+              <span>${error.message || 'Failed to send message.'} Please try again or email me at
+              <a href="mailto:${emailAddress}" style="color:inherit;text-decoration:underline;font-weight:700;">${emailAddress}</a>.</span>
+            </div>
+          `;
+        }
       } finally {
         submitButton.innerHTML = originalButtonHTML;
         submitButton.disabled = false;
@@ -378,6 +447,71 @@ document.addEventListener('DOMContentLoaded', () => {
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer');
     }
+  });
+
+  // ── Online/Offline Status Detection ────────────────────────────────
+  function createStatusBanner(isOnline) {
+    let banner = document.getElementById('online-status-banner');
+
+    if (isOnline) {
+      if (banner) {
+        banner.remove();
+      }
+    } else {
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'online-status-banner';
+        banner.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+          color: white;
+          padding: 12px 20px;
+          text-align: center;
+          font-size: 14px;
+          font-weight: 600;
+          z-index: 10000;
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+          animation: slideDown 0.3s ease-out;
+        `;
+        banner.innerHTML = '<i class="fas fa-wifi-slash"></i> You are offline – messages will be saved locally';
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+          @keyframes slideUp {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-100%); opacity: 0; }
+          }
+        `;
+        if (!document.querySelector('style[data-status-banner]')) {
+          style.setAttribute('data-status-banner', 'true');
+          document.head.appendChild(style);
+        }
+
+        document.body.insertBefore(banner, document.body.firstChild);
+      }
+    }
+  }
+
+  // Check initial status
+  createStatusBanner(navigator.onLine);
+
+  // Listen for online/offline events
+  window.addEventListener('online', () => {
+    createStatusBanner(true);
+    console.log('✅ Back online');
+  });
+
+  window.addEventListener('offline', () => {
+    createStatusBanner(false);
+    console.log('⚠️ You are offline');
   });
 
   // ── Print-friendly ────────────────────────────────────────────────
