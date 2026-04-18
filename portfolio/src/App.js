@@ -1,7 +1,9 @@
 // ==================== CONFIGURATION ====================
+// In development, proxy is set up in vite.config.js to forward /api → localhost:3001
+// In production, update the URL below to your deployed backend (e.g. Render, Railway, etc.)
 const API_BASE_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001'
-  : 'https://your-backend-url.com'; // Change this to your production backend URL
+  ? ''
+  : ''; // TODO: set to your production backend URL when you deploy, e.g. 'https://my-portfolio-api.onrender.com'
 
 // ==================== TYPING ANIMATION DATA ====================
 const roles = [
@@ -225,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (messageField && charCount) {
           charCount.textContent = formData.message.length;
         }
-      } catch (e) {
+      } catch {
         console.log('Could not restore draft');
       }
     }
