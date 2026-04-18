@@ -1,9 +1,9 @@
 // ==================== CONFIGURATION ====================
-// In development, proxy is set up in vite.config.js to forward /api → localhost:3001
-// In production, update the URL below to your deployed backend (e.g. Render, Railway, etc.)
+// Development: requests go directly to the Express backend on port 3001 (CORS is enabled in server.js)
+// Production: update the second value to your deployed backend URL, e.g. 'https://my-portfolio-api.onrender.com'
 const API_BASE_URL = window.location.hostname === 'localhost'
-  ? ''
-  : ''; // TODO: set to your production backend URL when you deploy, e.g. 'https://my-portfolio-api.onrender.com'
+  ? 'http://localhost:3001'
+  : ''; // TODO: replace with your production backend URL when deploying
 
 // ==================== TYPING ANIMATION DATA ====================
 const roles = [
