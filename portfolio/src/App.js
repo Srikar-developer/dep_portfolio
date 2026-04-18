@@ -1,9 +1,9 @@
 // ==================== CONFIGURATION ====================
 // Development: requests go directly to the Express backend on port 3001 (CORS is enabled in server.js)
-// Production: update the second value to your deployed backend URL, e.g. 'https://my-portfolio-api.onrender.com'
+// Production: backend is deployed on Render
 const API_BASE_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
-  : window.location.origin; // Uses same domain as frontend in production
+  : 'https://dep-portfolio.onrender.com';
 
 // ==================== TYPING ANIMATION DATA ====================
 const roles = [

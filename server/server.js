@@ -21,7 +21,7 @@ const escapeHtml = (text) => {
 };
 
 // ── Middleware ──────────────────────────────────────────────────────────────
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'] }));
+app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'https://dep-portfolio-eight.vercel.app'] }));
 app.use(express.json());
 
 // ── Nodemailer transporter (Gmail + App Password) ───────────────────────────
