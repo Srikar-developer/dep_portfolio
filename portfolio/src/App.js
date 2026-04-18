@@ -3,7 +3,7 @@
 // Production: update the second value to your deployed backend URL, e.g. 'https://my-portfolio-api.onrender.com'
 const API_BASE_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
-  : ''; // TODO: replace with your production backend URL when deploying
+  : window.location.origin; // Uses same domain as frontend in production
 
 // ==================== TYPING ANIMATION DATA ====================
 const roles = [
