@@ -1,18 +1,4 @@
-require('dotenv').config();
-const express = require('express');
-const nodemailer = require('nodemailer');
-const sgMail = require('@sendgrid/mail');
-const cors = require('cors');
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-const hasGmailConfig = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASS);
-const hasSendGridConfig = Boolean(process.env.SENDGRID_API_KEY);
-
-// Initialize SendGrid if API key is provided
-if (hasSendGridConfig) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
+import nodemailer from 'nodemailer';
 
 // Helper function to escape HTML
 const escapeHtml = (text) => {
@@ -20,54 +6,27 @@ const escapeHtml = (text) => {
   return text.replace(/[&<>"']/g, (char) => map[char]);
 };
 
-// ── Middleware ──────────────────────────────────────────────────────────────
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'https://dep-portfolio-eight.vercel.app'] }));
-app.use(express.json());
+export default async function handler(req, res) {
+  // CORS setup
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*'); 
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-// ── Nodemailer transporter (Gmail + App Password) ───────────────────────────
-let transporter = null;
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
-if (hasGmailConfig) {
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS, // 16-char Google App Password
-    },
-    tls: {
-      rejectUnauthorized: false, // Handle self-signed cert chains on some networks
-    },
-  });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, error: 'Method Not Allowed' });
+  }
 
-  // Verify transporter on startup
-  transporter.verify((error) => {
-    if (error) {
-      console.warn('⚠️ Gmail service is not ready:', error.message);
-      console.log('⚠️ Check EMAIL_USER and EMAIL_PASS in .env (use a Gmail App Password).');
-    } else {
-      console.log('✅ Gmail service ready');
-    }
-  });
-} else {
-  console.log('⚠️ Gmail is not configured. Set EMAIL_USER and EMAIL_PASS in .env to enable Gmail.');
-}
-
-// Check SendGrid configuration
-if (hasSendGridConfig) {
-  console.log('✅ SendGrid configured as fallback');
-} else {
-  console.log('⚠️ SendGrid is not configured. Set SENDGRID_API_KEY in .env to enable SendGrid fallback.');
-}
-
-if (!hasGmailConfig && !hasSendGridConfig) {
-  console.warn('⚠️ No email service configured! Contact form will not work.');
-}
-
-// ── POST /api/contact ───────────────────────────────────────────────────────
-app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
 
-  // Basic validation
   if (!name || !email || !subject || !message) {
     return res.status(400).json({ success: false, error: 'All fields are required.' });
   }
@@ -75,13 +34,6 @@ app.post('/api/contact', async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ success: false, error: 'Invalid email address.' });
-  }
-
-  if (!transporter && !hasSendGridConfig) {
-    return res.status(503).json({
-      success: false,
-      error: 'Email service is not configured. Please try again later.',
-    });
   }
 
   try {
@@ -124,7 +76,7 @@ app.post('/api/contact', async (req, res) => {
           </div>
           <!-- Footer -->
           <div style="padding:20px;text-align:center;background:#f8fafc;border-top:1px solid #eaebed;color:#64748b;font-size:13px;">
-            Deployed via Local Development Server
+            Deployed via Vercel Serverless Contact System
           </div>
         </div>
       `,
@@ -138,7 +90,7 @@ app.post('/api/contact', async (req, res) => {
       html: `
         <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.05);border:1px solid #eaebed;">
           <!-- Header block -->
-          <div style="background:linear-gradient(135deg,#0ea5e9 0%,#2563eb 100%);padding:30px;text-align:center;">
+          <div style="background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);padding:30px;text-align:center;">
             <h2 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:0.5px;">Message Received!</h2>
           </div>
           <!-- Body -->
@@ -159,49 +111,29 @@ app.post('/api/contact', async (req, res) => {
       `,
     };
 
-    let emailServiceUsed = null;
-
-    // Try Gmail first, then fallback to SendGrid
-    try {
-      if (transporter) {
-        await transporter.sendMail(notificationEmail);
-        await transporter.sendMail(replyEmail);
-        emailServiceUsed = 'Gmail';
-      } else {
-        throw new Error('Gmail not available');
-      }
-    } catch (gmailError) {
-      console.warn('Gmail failed:', gmailError.message);
-
-      if (hasSendGridConfig) {
-        try {
-          await sgMail.send(notificationEmail);
-          await sgMail.send(replyEmail);
-          emailServiceUsed = 'SendGrid';
-          console.log('✅ Email sent via SendGrid (Gmail fallback)');
-        } catch (sendGridError) {
-          console.error('SendGrid also failed:', sendGridError.message);
-          throw new Error('Both Gmail and SendGrid failed');
-        }
-      } else {
-        throw gmailError;
-      }
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn("Vercel Email configuration missing: EMAIL_USER or EMAIL_PASS not set.");
+      return res.status(503).json({ success: false, error: 'Email service is not configured on Vercel backend. Please try again later.' });
     }
 
-    res.json({
-      success: true,
-      message: 'Message sent successfully!',
-      service: emailServiceUsed
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
     });
+
+    await transporter.sendMail(notificationEmail);
+    await transporter.sendMail(replyEmail);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Message sent successfully via Vercel!',
+    });
+
   } catch (err) {
-    console.error('Contact form error:', err.message);
-    res.status(500).json({ success: false, error: 'Failed to send email. Please try again.' });
+    console.error('API Contact error:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to send email via Vercel. Please try again.' });
   }
-});
-
-// ── Health check ────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+}

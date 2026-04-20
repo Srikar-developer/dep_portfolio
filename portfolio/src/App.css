@@ -903,14 +903,16 @@ body {
   position: relative;
 }
 
-.project-image img {
+.project-image img,
+.project-image div {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s;
 }
 
-.project-card:hover .project-image img {
+.project-card:hover .project-image img,
+.project-card:hover .project-image div {
   transform: scale(1.15);
 }
 
@@ -1026,6 +1028,9 @@ body {
   background: var(--bg-white);
   border-radius: 20px;
   padding: 36px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   box-shadow: var(--shadow-md);
   border: 2px solid var(--border-color);
   transition: all 0.4s;
@@ -1102,6 +1107,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
 }
 
 .cert-detail {
@@ -1143,6 +1149,8 @@ body {
   font-weight: 600;
   transition: all 0.3s;
   align-self: flex-start;
+  width: 100%;
+  justify-content: center;
 }
 
 .cert-verify:hover {
@@ -1199,6 +1207,14 @@ body {
   margin-top: 8px;
 }
 
+.cert-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
 .cert-btn {
   display: inline-flex;
   align-items: center;
@@ -1212,6 +1228,8 @@ body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  flex: 1;
+  justify-content: center;
 }
 
 .cert-btn::before {
@@ -1316,6 +1334,10 @@ body {
   color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
 }
 
 .contact-item a:hover {
@@ -1693,23 +1715,19 @@ body {
   }
   
   .timeline::before {
-    left: 16px;
+    left: 10px;
   }
   
   .timeline-item {
-    padding-left: 60px;
+    padding-left: 32px;
   }
   
   .timeline-marker {
-    left: 7px;
+    left: -1px;
   }
   
   .timeline-badge {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-    top: -12px;
-    right: 16px;
+    display: none;
   }
   
   .projects-grid,
@@ -1736,8 +1754,9 @@ body {
   }
   
   .hero-roles {
-    font-size: 20px;
+    font-size: 15px;
     min-height: 30px;
+    padding: 0 10px;
   }
   
   .hero-description {
@@ -1810,11 +1829,7 @@ body {
   }
   
   .timeline-badge {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
-    top: -10px;
-    right: 12px;
+    display: none;
   }
   
   .project-info,

@@ -1,9 +1,6 @@
-// ==================== CONFIGURATION ====================
-// Development: requests go directly to the Express backend on port 3001 (CORS is enabled in server.js)
-// Production: backend is deployed on Render
-const API_BASE_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001'
-  : 'https://dep-portfolio.onrender.com';
+// Development & Production: API routing uses relative paths
+// Handled by Vite Proxy locally and Vercel natively in production
+const API_BASE_URL = '';
 
 // ==================== TYPING ANIMATION DATA ====================
 const roles = [
@@ -356,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Check if it's a network error (offline)
         const isNetworkError = !navigator.onLine || error.message.includes('Failed to fetch');
-        const emailAddress = 'srikarpuyal.me@gmail.com';
+        const emailAddress = 'srikarsri5566@gmail.com';
 
         formMessage.style.display = 'flex';
         formMessage.className = 'form-message error';
