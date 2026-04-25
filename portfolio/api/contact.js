@@ -46,37 +46,36 @@ export default async function handler(req, res) {
       replyTo: email,
       subject: `Portfolio Contact: ${escapeHtml(subject)}`,
       html: `
-        <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.05);border:1px solid #eaebed;">
-          <!-- Header block -->
-          <div style="background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);padding:30px;text-align:center;">
-            <h2 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:0.5px;">📬 New Connection</h2>
-            <p style="color:rgba(255,255,255,0.8);margin:8px 0 0;font-size:15px;">Someone reached out from your portfolio</p>
+        <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+          <div style="border-bottom: 2px solid #3b82f6; padding-bottom: 20px; margin-bottom: 30px;">
+            <h2 style="color: #1e293b; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">New Contact Submission</h2>
+            <p style="color: #64748b; margin: 8px 0 0 0; font-size: 14px; font-weight: 500;">Automated notification from your portfolio</p>
           </div>
-          <!-- Body -->
-          <div style="padding:40px 30px;background:#ffffff;">
-            <div style="background:#f8fafc;border-radius:12px;padding:24px;margin-bottom:30px;border:1px solid #f1f5f9;">
-              <table style="width:100%;border-collapse:collapse;font-size:15px;">
-                <tr>
-                  <td style="padding:8px 0;font-weight:600;color:#334155;width:80px;">Name</td>
-                  <td style="padding:8px 0;color:#0f172a;font-weight:500;">${escapeHtml(name)}</td>
-                </tr>
-                <tr>
-                  <td style="padding:8px 0;font-weight:600;color:#334155;">Email</td>
-                  <td style="padding:8px 0;"><a href="mailto:${escapeHtml(email)}" style="color:#6366f1;text-decoration:none;font-weight:500;">${escapeHtml(email)}</a></td>
-                </tr>
-                <tr>
-                  <td style="padding:8px 0;font-weight:600;color:#334155;">Subject</td>
-                  <td style="padding:8px 0;color:#0f172a;font-weight:500;">${escapeHtml(subject)}</td>
-                </tr>
-              </table>
-            </div>
-            
-            <h3 style="margin:0 0 12px;color:#1e293b;font-size:16px;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Message</h3>
-            <div style="background:#f8fafc;padding:20px;border-left:4px solid #6366f1;border-radius:0 8px 8px 0;color:#334155;line-height:1.7;white-space:pre-wrap;font-size:15px;">${escapeHtml(message)}</div>
+          
+          <div style="margin-bottom: 35px;">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 16px; font-size: 15px;">
+              <tr>
+                <td style="color: #64748b; width: 120px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Name</td>
+                <td style="color: #0f172a; font-weight: 600;">${escapeHtml(name)}</td>
+              </tr>
+              <tr>
+                <td style="color: #64748b; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Email</td>
+                <td><a href="mailto:${escapeHtml(email)}" style="color: #3b82f6; text-decoration: none; font-weight: 500;">${escapeHtml(email)}</a></td>
+              </tr>
+              <tr>
+                <td style="color: #64748b; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Subject</td>
+                <td style="color: #0f172a; font-weight: 500;">${escapeHtml(subject)}</td>
+              </tr>
+            </table>
           </div>
-          <!-- Footer -->
-          <div style="padding:20px;text-align:center;background:#f8fafc;border-top:1px solid #eaebed;color:#64748b;font-size:13px;">
-            Deployed via Vercel Serverless Contact System
+          
+          <div style="margin-bottom: 30px;">
+            <h3 style="color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px 0;">Message Content</h3>
+            <div style="background-color: #f8fafc; padding: 24px; border-radius: 12px; color: #334155; line-height: 1.6; white-space: pre-wrap; font-size: 15px; border: 1px solid #e2e8f0;">${escapeHtml(message)}</div>
+          </div>
+          
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center; color: #94a3b8; font-size: 12px; font-weight: 500;">
+            System generated message &bull; Vercel Serverless
           </div>
         </div>
       `,
@@ -86,26 +85,28 @@ export default async function handler(req, res) {
     const replyEmail = {
       from: `"Srikar" <${fromEmail}>`,
       to: email,
-      subject: `Thanks for reaching out, ${escapeHtml(name)}!`,
+      subject: `Message Received - Portfolio Inquiry`,
       html: `
-        <div style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.05);border:1px solid #eaebed;">
-          <!-- Header block -->
-          <div style="background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);padding:30px;text-align:center;">
-            <h2 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;letter-spacing:0.5px;">Message Received!</h2>
+        <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
+          <div style="text-align: center; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9;">
+            <h2 style="color: #0f172a; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">Message Received</h2>
           </div>
-          <!-- Body -->
-          <div style="padding:40px 30px;background:#ffffff;">
-            <p style="color:#334155;font-size:16px;line-height:1.6;margin-top:0;">Hi <strong>${escapeHtml(name)}</strong> 👋,</p>
-            <p style="color:#334155;font-size:16px;line-height:1.7;">Thanks for reaching out! I've successfully received your message about <strong style="color:#0f172a;background:#f1f5f9;padding:2px 8px;border-radius:4px;">${escapeHtml(subject)}</strong>.</p>
-            <p style="color:#334155;font-size:16px;line-height:1.7;">I'll review it and get back to you within 24–48 hours.</p>
+          
+          <div style="padding: 32px 0;">
+            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-top: 0; font-weight: 500;">Dear ${escapeHtml(name)},</p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.7;">Thank you for contacting me. This is an automated confirmation that your message regarding <strong style="color: #0f172a; font-weight: 600;">"${escapeHtml(subject)}"</strong> has been successfully delivered to my inbox.</p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.7;">I am currently reviewing your inquiry and will provide a response as promptly as possible, generally within 1-2 business days.</p>
             
-            <div style="margin-top:30px;padding-top:20px;border-top:1px solid #e2e8f0;">
-              <p style="color:#64748b;font-size:15px;margin-bottom:12px;">In the meantime, feel free to explore:</p>
-              <a href="https://github.com/Srikar-developer" style="display:inline-block;padding:10px 20px;background:#0f172a;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;margin-right:10px;">GitHub Profile</a>
-              <a href="https://www.linkedin.com/in/srikar-p-64a4b12a5/" style="display:inline-block;padding:10px 20px;background:#0077b5;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;">LinkedIn Profile</a>
+            <div style="margin-top: 40px; text-align: center;">
+              <a href="https://github.com/Srikar-developer" style="display: inline-block; padding: 12px 28px; background-color: #0f172a; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 14px; border-radius: 8px; margin: 0 8px 8px 0;">View GitHub</a>
+              <a href="https://www.linkedin.com/in/srikar-p-64a4b12a5/" style="display: inline-block; padding: 12px 28px; background-color: #ffffff; color: #0f172a; text-decoration: none; font-weight: 500; border-radius: 8px; font-size: 14px; border: 1px solid #cbd5e1; margin: 0 0 8px 0;">Connect on LinkedIn</a>
             </div>
             
-            <p style="margin-top:40px;color:#0f172a;font-weight:700;font-size:16px;">Best regards,<br><span style="color:#6366f1;">Srikar</span></p>
+            <div style="margin-top: 48px; border-top: 1px solid #f1f5f9; padding-top: 24px;">
+              <p style="margin: 0; color: #0f172a; font-weight: 600; font-size: 16px;">Best regards,</p>
+              <p style="margin: 4px 0 0 0; color: #475569; font-size: 15px;">Srikar</p>
+              <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 13px; font-weight: 500;">Software Developer</p>
+            </div>
           </div>
         </div>
       `,

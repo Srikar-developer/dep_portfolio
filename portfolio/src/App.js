@@ -334,7 +334,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok && result.success) {
           formMessage.style.display = 'flex';
           formMessage.className = 'form-message success';
-          formMessage.innerHTML = '<i class="fas fa-check-circle"></i> Message sent! I\'ll get back to you within 24–48 hours.';
+          formMessage.innerHTML = `
+            <div style="display:flex;gap:14px;align-items:flex-start;width:100%;">
+              <i class="fas fa-check-circle" style="margin-top:2px;flex-shrink:0;"></i>
+              <div style="flex:1;">
+                <strong>Message sent successfully!</strong>
+                <div style="font-size:13px;margin-top:6px;opacity:0.95;">
+                  ✓ Confirmation email sent to you<br>
+                  ✓ Notification sent to me<br>
+                  I'll get back to you within 24–48 hours.
+                </div>
+              </div>
+            </div>
+          `;
 
           contactForm.reset();
           if (charCount) charCount.textContent = '0';
