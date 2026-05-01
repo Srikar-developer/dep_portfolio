@@ -657,6 +657,7 @@ body {
   color: white;
   font-size: 22px;
   margin-bottom: 16px;
+  box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .skill-category h4 {
@@ -1069,7 +1070,7 @@ body {
   color: white;
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .cert-logo.salesforce {
@@ -1314,6 +1315,7 @@ body {
   font-size: 22px;
   flex-shrink: 0;
   transition: all 0.3s;
+  box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .contact-item:hover .contact-icon {
@@ -1880,4 +1882,141 @@ body {
   .cert-title h3 {
     font-size: 19px;
   }
+}
+
+/* ==================== MEDIA QUERIES ==================== */
+@media (max-width: 1024px) {
+  .hero-title { font-size: clamp(40px, 6vw, 56px); }
+  .about-content { grid-template-columns: 1fr; gap: 40px; }
+  .about-image { max-width: 500px; margin: 0 auto; }
+}
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-white);
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-menu.active {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  .nav-link {
+    width: 100%;
+    display: block;
+    text-align: center;
+    padding: 12px;
+  }
+  .contact-content { grid-template-columns: 1fr; gap: 40px; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .timeline::before { left: 20px; }
+  .timeline-marker { left: 10px; }
+  .timeline-item { padding-left: 60px; }
+}
+
+/* ==================== PREMIUM ICON STYLES ==================== */
+i.fas, i.fab, i.far {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.25));
+  transition: all 0.3s ease;
+}
+
+.btn i.fas, .btn i.fab, .btn i.far {
+  filter: none;
+}
+.btn-primary i.fas, .btn-primary i.fab, .btn-primary i.far {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: var(--primary-dark);
+}
+[data-theme="dark"] .btn-primary i.fas, [data-theme="dark"] .btn-primary i.fab, [data-theme="dark"] .btn-primary i.far {
+  color: var(--primary-light);
+}
+
+.btn-secondary i.fas, .btn-secondary i.fab, .btn-secondary i.far {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: var(--secondary-color);
+}
+
+.btn-outline i.fas, .btn-outline i.fab, .btn-outline i.far {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: inherit;
+}
+
+.skill-icon i.fas, .timeline-badge i.fas, .cert-logo i.fas, .contact-icon i.fas, #back-to-top i.fas, .project-achievement i.fas, .form-message.success i.fas, .form-message.error i.fas, .cert-btn i.fas, .project-tags span i.fas, .project-tags span i.fab {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: inherit;
+  filter: none;
+}
+
+.skill-icon i.fas, .timeline-badge i.fas, .cert-logo i.fas, .contact-icon i.fas, #back-to-top i.fas, .cert-btn i.fas {
+  color: white;
+}
+
+.project-link i.fas, .project-link i.fab {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: var(--primary-color);
+  filter: none;
+}
+
+.project-link:hover i.fas, .project-link:hover i.fab {
+  color: white;
+}
+
+.form-message.success i.fas { color: #10b981; }
+.form-message.error i.fas { color: var(--danger-color); }
+.project-achievement i.fas { color: var(--accent-color); }
+
+.theme-toggle i.fas {
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.theme-toggle:hover i.fas {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: white;
+}
+
+.social-icon i.fab, .social-icon i.fas {
+  background: var(--text-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: none;
+}
+.social-icon:hover i.fab, .social-icon:hover i.fas {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  color: white;
 }
