@@ -905,7 +905,7 @@ body {
 }
 
 .project-image img,
-.project-image div {
+.project-image > div:not(.project-overlay) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -913,7 +913,7 @@ body {
 }
 
 .project-card:hover .project-image img,
-.project-card:hover .project-image div {
+.project-card:hover .project-image > div:not(.project-overlay) {
   transform: scale(1.15);
 }
 
@@ -1272,6 +1272,10 @@ body {
   color: #fff;
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+.cert-btn-download i.fas {
+  color: inherit;
 }
 
 /* ==================== CONTACT SECTION ==================== */
@@ -1971,7 +1975,7 @@ i.fas, i.fab, i.far {
   filter: none;
 }
 
-.skill-icon i.fas, .timeline-badge i.fas, .cert-logo i.fas, .contact-icon i.fas, #back-to-top i.fas, .cert-btn i.fas {
+.skill-icon i.fas, .timeline-badge i.fas, .cert-logo i.fas, .contact-icon i.fas, #back-to-top i.fas, .cert-btn-view i.fas {
   color: white;
 }
 
