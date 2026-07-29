@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
   typeRole();
 
   // ── Theme toggle button ───────────────────────────────────────────
+  const currentSavedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(currentSavedTheme);
+
   const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
@@ -363,14 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (error) {
         console.error('Contact form error:', error);
 
-        // Check if it's a network error (offline)
-        const isNetworkError = !navigator.onLine || error.message.includes('Failed to fetch');
+        // Check if user is actually offline vs server/connection error
+        const isOffline = !navigator.onLine;
         const emailAddress = 'srikarsri5566@gmail.com';
 
         formMessage.style.display = 'flex';
         formMessage.className = 'form-message error';
 
-        if (isNetworkError) {
+        if (isOffline) {
           // Offline mode: Show draft saved message and email fallback
           formMessage.innerHTML = `
             <div style="display:flex;align-items:flex-start;gap:12px;flex-direction:column;">
@@ -389,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
           let errorMsg = error.message || 'Failed to send message.';
 
           // Check if it's a backend connection error
-          if (errorMsg.includes('Failed to fetch') || errorMsg.includes('Backend')) {
+          if (errorMsg.includes('Failed to fetch') || errorMsg.includes('Backend') || errorMsg.includes('NetworkError')) {
             errorMsg = 'Cannot connect to backend server. Please ensure the server is running.';
           }
 
@@ -440,8 +443,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (hamburger && navMenu) {
     hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
+      const isExpanded = hamburger.classList.toggle('active');
       navMenu.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
     });
 
     // Close menu when clicking on a link
@@ -449,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
       });
     });
 
@@ -457,6 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
       }
     });
   }
@@ -469,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (kb_hamburger && kb_navMenu && kb_navMenu.classList.contains('active')) {
         kb_hamburger.classList.remove('active');
         kb_navMenu.classList.remove('active');
+        kb_hamburger.setAttribute('aria-expanded', 'false');
       }
     }
   });

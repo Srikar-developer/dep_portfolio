@@ -160,13 +160,19 @@ app.post('/api/contact', async (req, res) => {
       `,
     };
 
+    let notificationSent = false;
     let emailServiceUsed = null;
 
     // Try Gmail first, then fallback to SendGrid
     try {
       if (transporter) {
         await transporter.sendMail(notificationEmail);
-        await transporter.sendMail(replyEmail);
+        notificationSent = true;
+        try {
+          await transporter.sendMail(replyEmail);
+        } catch (replyErr) {
+          console.warn('Gmail auto-reply warning:', replyErr.message);
+        }
         emailServiceUsed = 'Gmail';
       } else {
         throw new Error('Gmail not available');
@@ -176,15 +182,23 @@ app.post('/api/contact', async (req, res) => {
 
       if (hasSendGridConfig) {
         try {
-          await sgMail.send(notificationEmail);
-          await sgMail.send(replyEmail);
+          if (!notificationSent) {
+            await sgMail.send(notificationEmail);
+          }
+          try {
+            await sgMail.send(replyEmail);
+          } catch (sgReplyErr) {
+            console.warn('SendGrid auto-reply warning:', sgReplyErr.message);
+          }
           emailServiceUsed = 'SendGrid';
           console.log('✅ Email sent via SendGrid (Gmail fallback)');
         } catch (sendGridError) {
           console.error('SendGrid also failed:', sendGridError.message);
-          throw new Error('Both Gmail and SendGrid failed');
+          if (!notificationSent) {
+            throw new Error('Both Gmail and SendGrid failed');
+          }
         }
-      } else {
+      } else if (!notificationSent) {
         throw gmailError;
       }
     }

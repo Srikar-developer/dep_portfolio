@@ -5,9 +5,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="Srikar - Full Stack MERN Developer, Salesforce Certified, HackIndia Top 10 Finalist" />
-  <meta name="keywords" content="MERN Stack, Full Stack Developer, Salesforce, Web Development" />
+    content="Srikar - Full Stack MERN Developer, Salesforce Certified, Microsoft AZ-900 Certified, HackIndia Top 10 Finalist" />
+  <meta name="keywords" content="MERN Stack, Full Stack Developer, Salesforce, Microsoft Azure, Web Development" />
   <meta name="author" content="Srikar" />
+  <meta property="og:title" content="Srikar - Full Stack MERN Developer" />
+  <meta property="og:description" content="Portfolio of Srikar - Full Stack MERN Developer, Salesforce Certified, Microsoft AZ-900 Certified, HackIndia Top 10 Finalist." />
+  <meta property="og:image" content="/hero_graphic.jpeg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Srikar - Full Stack MERN Developer" />
+  <meta name="twitter:description" content="Portfolio of Srikar - Full Stack MERN Developer, Salesforce Certified, Microsoft AZ-900 Certified, HackIndia Top 10 Finalist." />
+  <meta name="twitter:image" content="/hero_graphic.jpeg" />
   <title>Srikar - Full Stack Developer</title>
   <link rel="stylesheet" href="/src/App.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,11 +46,11 @@
           <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
             <i class="fas fa-moon"></i>
           </button>
-          <div class="hamburger" id="hamburger">
+          <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
             <span></span>
             <span></span>
             <span></span>
-          </div>
+          </button>
         </div>
       </div>
     </nav>
@@ -66,6 +74,9 @@
         <div class="hero-buttons">
           <a href="#projects" class="btn btn-primary btn-glow">
             <i class="fas fa-rocket"></i> View Projects
+          </a>
+          <a href="/Srikar_Resume.pdf" download="Srikar_Resume.pdf" class="btn btn-secondary btn-outline">
+            <i class="fas fa-file-download"></i> Download Resume
           </a>
           <a href="#contact" class="btn btn-secondary btn-outline">
             <i class="fas fa-paper-plane"></i> Let's Connect
@@ -758,10 +769,14 @@
             </div>
           </div>
 
-          <a href="/Srikar_CV 2.pdf" target="_blank" rel="noopener noreferrer"
-            class="btn btn-primary btn-download">
-            <i class="fas fa-file-pdf"></i> View & Download Resume
-          </a>
+          <div class="resume-buttons-wrapper">
+            <a href="/Srikar_Resume.pdf" target="_blank" rel="noopener noreferrer" class="resume-btn resume-btn-primary">
+              <i class="fas fa-eye"></i> View Resume
+            </a>
+            <a href="/Srikar_Resume.pdf" download="Srikar_Resume.pdf" class="resume-btn resume-btn-secondary">
+              <i class="fas fa-file-download"></i> Download PDF
+            </a>
+          </div>
         </div>
 
         <div class="contact-form-wrapper">
@@ -801,7 +816,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2025 Srikar. All rights reserved.</p>
+      <p>&copy; 2026 Srikar. All rights reserved.</p>
     </div>
   </footer>
 

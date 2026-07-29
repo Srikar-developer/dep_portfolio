@@ -1418,6 +1418,63 @@ body {
   margin-top: 24px;
 }
 
+/* Resume Buttons in Contact Section */
+.resume-buttons-wrapper {
+  display: flex;
+  gap: 14px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.resume-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  height: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.resume-btn-primary {
+  background: var(--gradient-primary);
+  color: #ffffff !important;
+  border: none;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.resume-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+  color: #ffffff !important;
+}
+
+.resume-btn-secondary {
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--primary-color) !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="dark"] .resume-btn-secondary {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--primary-light) !important;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.resume-btn-secondary:hover {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: var(--primary-color);
+  color: var(--primary-dark) !important;
+  transform: translateY(-2px);
+}
+
 /* ==================== CONTACT FORM ==================== */
 .contact-form-wrapper {
   background: var(--bg-white);
