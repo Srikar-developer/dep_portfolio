@@ -47,25 +47,6 @@ function typeRole() {
   setTimeout(typeRole, speed);
 }
 
-// ==================== THEME TOGGLE ====================
-const htmlElement = document.documentElement;
-
-function setTheme(theme) {
-  htmlElement.setAttribute('data-theme', theme);
-  const themeToggle = document.getElementById('theme-toggle');
-  if (themeToggle) {
-    const icon = themeToggle.querySelector('i');
-    if (icon) {
-      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-    }
-  }
-  localStorage.setItem('theme', theme);
-}
-
-// Load saved theme immediately (before DOMContentLoaded so there's no flash)
-const savedTheme = localStorage.getItem('theme') || 'light';
-setTheme(savedTheme);
-
 // ==================== PREVENT FORM RESUBMISSION ====================
 if (window.history.replaceState) {
   window.history.replaceState(null, null, window.location.href);
@@ -115,18 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Typing animation ──────────────────────────────────────────────
   typeRole();
-
-  // ── Theme toggle button ───────────────────────────────────────────
-  const currentSavedTheme = localStorage.getItem('theme') || 'light';
-  setTheme(currentSavedTheme);
-
-  const themeToggle = document.getElementById('theme-toggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = htmlElement.getAttribute('data-theme');
-      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-    });
-  }
 
   // ── Smooth scrolling ─────────────────────────────────────────────
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
