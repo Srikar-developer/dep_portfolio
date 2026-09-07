@@ -122,13 +122,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateActiveNav() {
     const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const bodyHeight = document.documentElement.scrollHeight;
+
+    // Near bottom of page: highlight contact link
+    if (windowHeight + scrollY >= bodyHeight - 60) {
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#contact') {
+          link.classList.add('active');
+        }
+      });
+      return;
+    }
 
     sections.forEach(section => {
       const sectionHeight = section.offsetHeight;
       const sectionTop = section.offsetTop - 100;
       const sectionId = section.getAttribute('id');
 
-      if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+      if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
         navLinks.forEach(link => {
           link.classList.remove('active');
           if (link.getAttribute('href') === `#${sectionId}`) {
@@ -166,8 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageTextarea = document.getElementById('message');
   const charCount = document.getElementById('char-count');
 
-  // ── Auto-save form to localStorage ────────────────────────────────
-  function saveDraft() {
+  // ── Auto-save form to localStorage (debounced) ─────────────────────
+  const debouncedSaveDraft = debounce(function () {
     const formData = {
       name: document.getElementById('name')?.value || '',
       email: document.getElementById('email')?.value || '',
@@ -176,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
       savedAt: new Date().toISOString()
     };
     localStorage.setItem('portfolioFormDraft', JSON.stringify(formData));
-  }
+  }, 250);
 
   function loadDraft() {
     const draft = localStorage.getItem('portfolioFormDraft');
@@ -188,13 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const subjectField = document.getElementById('subject');
         const messageField = document.getElementById('message');
 
-        if (nameField) nameField.value = formData.name;
-        if (emailField) emailField.value = formData.email;
-        if (subjectField) subjectField.value = formData.subject;
-        if (messageField) messageField.value = formData.message;
-
-        if (messageField && charCount) {
-          charCount.textContent = formData.message.length;
+        if (nameField && formData.name) nameField.value = formData.name;
+        if (emailField && formData.email) emailField.value = formData.email;
+        if (subjectField && formData.subject) subjectField.value = formData.subject;
+        if (messageField && formData.message) {
+          messageField.value = formData.message;
+          if (charCount) charCount.textContent = formData.message.length;
         }
       } catch {
         console.log('Could not restore draft');
@@ -220,13 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         charCount.style.color = 'var(--text-secondary)';
       }
-
-      // Auto-save draft on input
-      saveDraft();
     });
   }
 
-  // Real-time field validation
+  // Real-time field validation & debounced draft saving
   const formInputs = document.querySelectorAll('.contact-form input, .contact-form textarea');
 
   formInputs.forEach(input => {
@@ -238,8 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (this.parentElement.classList.contains('error')) {
         validateField(this);
       }
-      // Auto-save draft on input
-      saveDraft();
+      debouncedSaveDraft();
     });
   });
 
@@ -411,27 +419,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const navMenu = document.getElementById('nav-menu');
 
   if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-      const isExpanded = hamburger.classList.toggle('active');
-      navMenu.classList.toggle('active');
+    const toggleMenu = (open) => {
+      const isExpanded = open !== undefined ? open : !hamburger.classList.contains('active');
+      hamburger.classList.toggle('active', isExpanded);
+      navMenu.classList.toggle('active', isExpanded);
       hamburger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      document.body.classList.toggle('menu-open', isExpanded);
+    };
+
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
     });
 
     // Close menu when clicking on a link
     document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        hamburger.setAttribute('aria-expanded', 'false');
+        toggleMenu(false);
       });
     });
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-        hamburger.setAttribute('aria-expanded', 'false');
+        toggleMenu(false);
       }
     });
   }

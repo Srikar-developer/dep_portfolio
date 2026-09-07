@@ -2,8 +2,9 @@ import nodemailer from 'nodemailer';
 
 // Helper function to escape HTML
 const escapeHtml = (text) => {
+  if (!text) return '';
   const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return text.replace(/[&<>"']/g, (char) => map[char]);
+  return String(text).replace(/[&<>"']/g, (char) => map[char]);
 };
 
 export default async function handler(req, res) {
@@ -25,26 +26,41 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
-  const { name, email, subject, message } = req.body;
+  const { name, email, subject, message } = req.body || {};
 
   if (!name || !email || !subject || !message) {
     return res.status(400).json({ success: false, error: 'All fields are required.' });
   }
 
+  const cleanName = String(name).trim();
+  const cleanEmail = String(email).trim();
+  const cleanSubject = String(subject).trim();
+  const cleanMessage = String(message).trim();
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
+  if (!emailRegex.test(cleanEmail)) {
     return res.status(400).json({ success: false, error: 'Invalid email address.' });
+  }
+
+  const OWNER_EMAIL = process.env.RECEIVER_EMAIL || process.env.EMAIL_USER || 'srikarsri5566@gmail.com';
+
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn("Vercel Email configuration missing: EMAIL_USER or EMAIL_PASS not set.");
+    return res.status(503).json({
+      success: false,
+      error: 'Email service is not configured on Vercel backend. Please contact directly at ' + OWNER_EMAIL,
+    });
   }
 
   try {
     const fromEmail = process.env.EMAIL_USER || 'noreply@portfolio.dev';
 
-    // Email to Srikar (notification)
+    // Email to Srikar (admin notification)
     const notificationEmail = {
       from: `"Portfolio Contact" <${fromEmail}>`,
-      to: process.env.EMAIL_USER || email,
-      replyTo: email,
-      subject: `Portfolio Contact: ${escapeHtml(subject)}`,
+      to: OWNER_EMAIL,
+      replyTo: cleanEmail,
+      subject: `Portfolio Contact: ${cleanSubject}`,
       html: `
         <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
           <div style="border-bottom: 2px solid #3b82f6; padding-bottom: 20px; margin-bottom: 30px;">
@@ -56,22 +72,22 @@ export default async function handler(req, res) {
             <table style="width: 100%; border-collapse: separate; border-spacing: 0 16px; font-size: 15px;">
               <tr>
                 <td style="color: #64748b; width: 120px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Name</td>
-                <td style="color: #0f172a; font-weight: 600;">${escapeHtml(name)}</td>
+                <td style="color: #0f172a; font-weight: 600;">${escapeHtml(cleanName)}</td>
               </tr>
               <tr>
                 <td style="color: #64748b; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Email</td>
-                <td><a href="mailto:${escapeHtml(email)}" style="color: #3b82f6; text-decoration: none; font-weight: 500;">${escapeHtml(email)}</a></td>
+                <td><a href="mailto:${escapeHtml(cleanEmail)}" style="color: #3b82f6; text-decoration: none; font-weight: 500;">${escapeHtml(cleanEmail)}</a></td>
               </tr>
               <tr>
                 <td style="color: #64748b; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Subject</td>
-                <td style="color: #0f172a; font-weight: 500;">${escapeHtml(subject)}</td>
+                <td style="color: #0f172a; font-weight: 500;">${escapeHtml(cleanSubject)}</td>
               </tr>
             </table>
           </div>
           
           <div style="margin-bottom: 30px;">
             <h3 style="color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px 0;">Message Content</h3>
-            <div style="background-color: #f8fafc; padding: 24px; border-radius: 12px; color: #334155; line-height: 1.6; white-space: pre-wrap; font-size: 15px; border: 1px solid #e2e8f0;">${escapeHtml(message)}</div>
+            <div style="background-color: #f8fafc; padding: 24px; border-radius: 12px; color: #334155; line-height: 1.6; white-space: pre-wrap; font-size: 15px; border: 1px solid #e2e8f0;">${escapeHtml(cleanMessage)}</div>
           </div>
           
           <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center; color: #94a3b8; font-size: 12px; font-weight: 500;">
@@ -84,7 +100,7 @@ export default async function handler(req, res) {
     // Auto-reply to sender
     const replyEmail = {
       from: `"Srikar" <${fromEmail}>`,
-      to: email,
+      to: cleanEmail,
       subject: `Message Received - Portfolio Inquiry`,
       html: `
         <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
@@ -93,8 +109,8 @@ export default async function handler(req, res) {
           </div>
           
           <div style="padding: 32px 0;">
-            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-top: 0; font-weight: 500;">Dear ${escapeHtml(name)},</p>
-            <p style="color: #475569; font-size: 16px; line-height: 1.7;">Thank you for contacting me. This is an automated confirmation that your message regarding <strong style="color: #0f172a; font-weight: 600;">"${escapeHtml(subject)}"</strong> has been successfully delivered to my inbox.</p>
+            <p style="color: #334155; font-size: 16px; line-height: 1.7; margin-top: 0; font-weight: 500;">Dear ${escapeHtml(cleanName)},</p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.7;">Thank you for contacting me. This is an automated confirmation that your message regarding <strong style="color: #0f172a; font-weight: 600;">"${escapeHtml(cleanSubject)}"</strong> has been successfully delivered to my inbox.</p>
             <p style="color: #475569; font-size: 16px; line-height: 1.7;">I am currently reviewing your inquiry and will provide a response as promptly as possible, generally within 1-2 business days.</p>
             
             <div style="margin-top: 40px; text-align: center;">
@@ -112,11 +128,6 @@ export default async function handler(req, res) {
       `,
     };
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn("Vercel Email configuration missing: EMAIL_USER or EMAIL_PASS not set.");
-      return res.status(503).json({ success: false, error: 'Email service is not configured on Vercel backend. Please try again later.' });
-    }
-
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -126,7 +137,11 @@ export default async function handler(req, res) {
     });
 
     await transporter.sendMail(notificationEmail);
-    await transporter.sendMail(replyEmail);
+
+    // Non-blocking auto-reply
+    transporter.sendMail(replyEmail).catch((err) => {
+      console.warn("Vercel auto-reply non-critical warning:", err.message);
+    });
 
     return res.status(200).json({
       success: true,
@@ -138,3 +153,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, error: 'Failed to send email via Vercel. Please try again.' });
   }
 }
+

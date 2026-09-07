@@ -500,13 +500,14 @@ body {
 /* ==================== ABOUT SECTION ==================== */
 .about-content {
   display: grid;
-  grid-template-columns: 400px 1fr;
-  gap: 64px;
+  grid-template-columns: 250px 1fr;
+  gap: 48px;
   align-items: start;
 }
 
 .about-image {
   position: relative;
+  width: 100%;
 }
 
 .image-frame {
@@ -514,6 +515,7 @@ body {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: var(--shadow-xl);
+  height: 320px;
 }
 
 .image-frame::before {
@@ -530,6 +532,9 @@ body {
 
 .image-frame img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
   display: block;
   border-radius: 18px;
 }
@@ -2229,5 +2234,18 @@ body {
   .form-group input,
   .form-group textarea {
     padding: 12px 14px;
+  }
+}
+
+/* Body lock when mobile menu is active */
+body.menu-open {
+  overflow: hidden !important;
+}
+
+/* Hide speech bubble arrows on small screens for clean alignment */
+@media screen and (max-width: 768px) {
+  .timeline-content::before,
+  .timeline-content::after {
+    display: none;
   }
 }
